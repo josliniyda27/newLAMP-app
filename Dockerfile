@@ -1,30 +1,32 @@
-# Use PHP 8.2 with Apache
-FROM php:8.2-apache
+# Use the official PHP image as the base image
+FROM php:8.1-apache
 
-# Install system dependencies
+# Install required packages
 RUN apt-get update && apt-get install -y \
-    libpng-dev libjpeg-dev libfreetype6-dev libzip-dev zip unzip \
-    mariadb-client curl git && \
-    docker-php-ext-configure gd --with-freetype --with-jpeg && \
-    docker-php-ext-install gd mysqli pdo pdo_mysql opcache zip && \
-    a2enmod rewrite && \
-    rm -rf /var/lib/apt/lists/*
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    libicu-dev \
+    g++ \
+    zlib1g-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd intl mysqli pdo pdo_mysql
+
+# Enable Apache mods
+RUN a2enmod rewrite
 
 # Install Composer
-#COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Set working directory
+# Set the working directory
 WORKDIR /var/www/html
 
-# Copy Drupal files from local to container
-COPY ./drupal10 /var/www/html
+# Install Drupal (latest version)
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
+    composer create-project drupal/recommended-project drupal
 
-# Set proper permissions
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html/sites
-
-# Expose port 80 for Apache
+# Expose port 80
 EXPOSE 80
 
-# Start Apache when the container runs
+# Start Apache server
 CMD ["apache2-foreground"]

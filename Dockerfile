@@ -27,8 +27,8 @@ WORKDIR /var/www/html
 # Install Drupal (latest version)
 RUN composer create-project drupal/recommended-project drupal
 
-# Expose port 80
-EXPOSE 80
+# Expose port 8082
+EXPOSE 8082
 
 # Start Apache server
 CMD ["apache2-foreground"]

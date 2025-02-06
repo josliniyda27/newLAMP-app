@@ -28,4 +28,4 @@ jobs:
       - name: Run Docker container
         run: |
           IMAGE_NAME="ghcr.io/${{ github.repository_owner }}/lamp-app"
-          docker run -d -p 8080:8080 $IMAGE_NAME:latest
+          docker run -d -p 8081:8081 $IMAGE_NAME:latest

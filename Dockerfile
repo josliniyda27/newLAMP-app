@@ -9,6 +9,9 @@ RUN apt-get update && apt-get install -y \
     libicu-dev \
     g++ \
     zlib1g-dev \
+    unzip \
+    zip \
+    git \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install gd intl mysqli pdo pdo_mysql
 
@@ -22,8 +25,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 WORKDIR /var/www/html
 
 # Install Drupal (latest version)
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
-    composer create-project drupal/recommended-project drupal
+RUN composer create-project drupal/recommended-project drupal
 
 # Expose port 80
 EXPOSE 80
